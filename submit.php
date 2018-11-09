@@ -12,12 +12,11 @@
   <h1>回答完了</h1>
   <?php
     require_once(dirname(__FILE__)."./DatabaseManagerClass/DatabaseManager.php");
-    session_start();
     $answer=array(
-      "name"=>$_SESSION["name"],
-      "email"=>$_SESSION["email"],
-      "job"=>$_SESSION["job"],
-      "message"=>$_SESSION["message"],
+      "name"=>$_POST["name"],
+      "email"=>$_POST["email"],
+      "job"=>$_POST["job"],
+      "message"=>$_POST["message"],
     );
     $db=new DatabaseManager;
     $db->DBinsert($answer);

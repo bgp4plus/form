@@ -1,16 +1,14 @@
 <?php
+require_once(dirname(__FILE__)."./DatabaseInformation.php");
 class DatabaseManager
 {
-    private $dbname="guestbook";
-    private $dbhost="localhost";
-    private $dbuser="root";
-    private $dbpass="";
     private $mypdo;
 
     private function DBconnect()
     {
         try {
-            $this->mypdo=new PDO("mysql:dbname=$this->dbname;dbhost=$this->dbhost;charset=utf8mb4", $this->dbuser, $this->dbpass);
+            $dbinfo=new DatabaseInformation();
+            $this->mypdo=new PDO("mysql:dbname=$dbinfo->dbname;dbhost=$dbinfo->dbhost;charset=utf8mb4", $dbinfo->dbuser, $dbinfo->dbpass,array(PDO::ATTR_EMULATE_PREPARES => false));
         } catch (PDOException $e) {
             echo "データベース接続エラー。".$e->getMessage();
             throw $e;
@@ -22,15 +20,15 @@ class DatabaseManager
         unset($this->mypdo);
     }
 
-    public function DBinsert($dbinfo)
+    public function DBinsert($data)
     {
         try {
-            $this->DBconnect($dbinfo);
+            $this->DBconnect($data);
             $stmt=$this->mypdo->prepare("insert into enquete values(:name,:email,:job,:message);");
-            $stmt->bindParam(":name", $dbinfo["name"], PDO::PARAM_STR);
-            $stmt->bindParam(":email", $dbinfo["email"], PDO::PARAM_STR);
-            $stmt->bindParam(":job", $dbinfo["job"], PDO::PARAM_STR);
-            $stmt->bindParam(":message", $dbinfo["message"], PDO::PARAM_STR);
+            $stmt->bindParam(":name", $data["name"], PDO::PARAM_STR);
+            $stmt->bindParam(":email", $data["email"], PDO::PARAM_STR);
+            $stmt->bindParam(":job", $data["job"], PDO::PARAM_STR);
+            $stmt->bindParam(":message", $data["message"], PDO::PARAM_STR);
             $stmt->execute();
             echo "登録完了";
         } catch (PDOException $e) {
